@@ -1,9 +1,18 @@
-body{
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;  margin: 0;
+/* Global font and layout */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
   padding: 0;
+  background-color: #e0e2e5;  /* slightly darker gray background */
+  min-height: 100vh;           /* ensures full viewport height */
 }
 
+/* Code styling */
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* Ensure React root div covers full height */
+html, #root {
+  height: 100%;
 }

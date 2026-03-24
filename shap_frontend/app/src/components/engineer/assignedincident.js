@@ -154,7 +154,7 @@ const AssignedIncidents = () => {
     if (!path) return null;
     if (path.startsWith("http")) return path;
     const cleanPath = path.startsWith("/") ? path.slice(1) : path;
-    return `https://incidentiq-backend.onrender.com/api/${cleanPath}`;
+    return `https://incident-iq.onrender.com/api/${cleanPath}`;
   };
 
   const fetchIncidents = async () => {

@@ -45,7 +45,7 @@ const fmt = (d) =>
 const getFullUrl = (path) => {
   if (!path) return null;
   if (path.startsWith("http")) return path;
-  return `https://incidentiq-backend.onrender.com/api/${path.replace(/^\//, "")}`;
+  return `https://incident-iq.onrender.com/api/${path.replace(/^\//, "")}`;
 };
 
 const capitalize = (s) =>

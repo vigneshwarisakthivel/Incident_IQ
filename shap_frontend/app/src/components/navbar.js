@@ -227,7 +227,7 @@ const NavContainer = styled(Box)({
 });
 
 const Navbar = () => {
-  const backendURL = "https://incidentiq-backend.onrender.com/api";
+  const backendURL = "https://incident-iq.onrender.com/api";
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [socket, setSocket] = useState(null);
@@ -322,7 +322,7 @@ useEffect(() => {
     return;
   }
 const ws = new WebSocket(
-  `wss://incidentiq-backend.onrender.com/ws/notifications/?token=${token}`
+  `wss://incident-iq.onrender.com/ws/notifications/?token=${token}`
 );
   ws.onopen = () => {
     console.log("WebSocket connected");
