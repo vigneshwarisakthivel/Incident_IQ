@@ -491,47 +491,47 @@ def register_admin(request):
         user = serializer.save()
 
         # Email setup
-        login_url = "http://localhost:3000/login"  # replace with your actual login page
+        login_url = "https://incident-iq-navy.vercel.app/login"
         subject = "Your Admin Account Has Been Created"
 
-        html_content = f"""
-        <html>
-        <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
-            <p>Dear {user.name},</p>
+        # html_content = f"""
+        # <html>
+        # <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
+        #     <p>Dear {user.name},</p>
 
-            <p>Your admin account has been successfully created.</p>
+        #     <p>Your admin account has been successfully created.</p>
 
-            <p>You can login to your account using the link below:</p>
+        #     <p>You can login to your account using the link below:</p>
 
-            <div style="margin: 20px 0;">
-                <a href="{login_url}" style="
-                    display: inline-block;
-                    background-color: #2563eb;
-                    color: white;
-                    text-decoration: none;
-                    padding: 12px 24px;
-                    border-radius: 5px;
-                    font-weight: bold;
-                    font-size: 14px;
-                ">Login to Your Admin Account</a>
-            </div>
+        #     <div style="margin: 20px 0;">
+        #         <a href="{login_url}" style="
+        #             display: inline-block;
+        #             background-color: #2563eb;
+        #             color: white;
+        #             text-decoration: none;
+        #             padding: 12px 24px;
+        #             border-radius: 5px;
+        #             font-weight: bold;
+        #             font-size: 14px;
+        #         ">Login to Your Admin Account</a>
+        #     </div>
 
-            <p>Thank you,<br><strong>Support Team</strong></p>
-        </body>
-        </html>
-        """
+        #     <p>Thank you,<br><strong>Support Team</strong></p>
+        # </body>
+        # </html>
+        # """
 
-        try:
-            email = EmailMessage(
-                subject=subject,
-                body=html_content,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[user.email],
-            )
-            email.content_subtype = "html"  # send as HTML
-            email.send(fail_silently=False)
-        except Exception as e:
-            print(f"Error sending email: {e}")
+        # try:
+        #     email = EmailMessage(
+        #         subject=subject,
+        #         body=html_content,
+        #         from_email=settings.DEFAULT_FROM_EMAIL,
+        #         to=[user.email],
+        #     )
+        #     email.content_subtype = "html"  # send as HTML
+        #     email.send(fail_silently=False)
+        # except Exception as e:
+        #     print(f"Error sending email: {e}")
 
         return Response({
             'id': user.id,

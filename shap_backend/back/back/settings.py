@@ -104,11 +104,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'back.wsgi.application'
 
-CORS_ALLOWED_ORIGINS = [
-    "https://incident-iq.onrender.com",  # Your backend
-    "https://incident-iq-navy.vercel.app",  # Add your frontend URL
-    # Add any other frontend domains
-]
+CORS_ALLOWED_ORIGINS = [] 
 CORS_ALLOW_ALL_ORIGINS = True
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
