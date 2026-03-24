@@ -152,7 +152,7 @@ USE_I18N = True
 USE_TZ = True
 
 # settings.py
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 DEFAULT_FROM_EMAIL = "noreply@example.com"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.gmail.com"
@@ -162,7 +162,7 @@ EMAIL_HOST_USER = "svel76356@gmail.com"
 EMAIL_HOST_PASSWORD = "hahg awpg ozig umlt"  # App password, not your Gmail password
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 STATIC_URL = 'static/'
-
+EMAIL_TIMEOUT = 5
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

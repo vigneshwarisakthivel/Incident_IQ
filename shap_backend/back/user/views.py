@@ -117,7 +117,7 @@ The Support Team
 
         # Send email
         try:
-            send_email_async(subject, text_content, html_content, email)
+            send_email_async(subject, text_content, html_content, user.email)
         except BadHeaderError as e:
             print("Bad header error:", e)
             return Response({"detail": "Invalid header found."}, status=status.HTTP_400_BAD_REQUEST)
@@ -480,7 +480,7 @@ class ResetPasswordView(APIView):
     IncidentIQ Support Team
     """
         try:
-            send_email_async(subject, text_content, html_content, user.email)
+           send_email_async(subject, text_content, html_content, user.email)
         except Exception as e:
             # Optional: log email sending error
             print(f"Failed to send password reset email: {e}")
@@ -542,6 +542,7 @@ def register_admin(request):
         try:
 
             send_email_async(subject, text_content, html_content, user.email)
+
         except Exception as e:
              print(f"Error sending email: {e}")
 
@@ -571,7 +572,7 @@ def create_user_by_admin(request):
         login_url = "http://localhost:3000/login"  # replace with real login URL
         original_password = request.data.get('password')
 
-        subject_user = "Your Account Has Been Created"
+        subject = "Your Account Has Been Created"
         html_content = f"""
         <html>
         <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
@@ -618,7 +619,7 @@ def create_user_by_admin(request):
         IncidentIQ Team
         """
         try:
-            send_email_async(subject_user,text_content, html_content, user.email)
+            send_email_async(subject, text_content, html_content, user.email)
 
             # Send email notification to the admin
             subject_admin = f"New User Created: {user.name}"
@@ -637,7 +638,22 @@ def create_user_by_admin(request):
             </body>
             </html>
             """
-            send_email_async(subject_admin,  html_content_admin, request.user.email)
+            text_content_admin = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
+                <p>Dear Admin,</p>
+                <p>A new user has been created in the system.</p>
+                <p><strong>User Details:</strong></p>
+                <ul>
+                    <li><strong>Name:</strong> {user.name}</li>
+                    <li><strong>Email:</strong> {user.email}</li>
+                    <li><strong>Role:</strong> {user.role.capitalize()}</li>
+                </ul>
+                <p>Thank you,<br><strong>System Notification</strong></p>
+            </body>
+            </html>
+            """
+            send_email_async(subject_admin, text_content_admin, html_content_admin, request.user.email)
 
         except Exception as e:
             print(f"Error sending email: {e}")

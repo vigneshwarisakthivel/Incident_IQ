@@ -81,11 +81,11 @@ def notify_admin(
 
 class EmailThread(threading.Thread):
     def __init__(self, subject, text_content, html_content, to_email):
+        super().__init__()
         self.subject = subject
         self.text_content = text_content
         self.html_content = html_content
         self.to_email = to_email
-        threading.Thread.__init__(self)
 
     def run(self):
         try:
@@ -95,11 +95,19 @@ class EmailThread(threading.Thread):
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 to=[self.to_email],
             )
+
             msg.attach_alternative(self.html_content, "text/html")
             msg.send(fail_silently=False)
 
+            print("EMAIL SENT SUCCESSFULLY")
+
         except Exception as e:
-            print("Email sending failed:", e)
+            print("EMAIL FAILED:", e)
 
 def send_email_async(subject, text_content, html_content, to_email):
-    EmailThread(subject, text_content, html_content, to_email).start()
+    thread = EmailThread(subject, text_content, html_content, to_email)
+
+    thread.daemon = False   # important → prevents killing before finishing
+    thread.start()
+
+    thread.join(3)   # wait maximum 3 seconds only
