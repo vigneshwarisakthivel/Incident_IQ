@@ -102,8 +102,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'back.wsgi.application'
 
 CORS_ALLOWED_ORIGINS = [
-    "https://incidentiq-backend.onrender.com",  # Your backend
-    "https://incident-iq-tau.vercel.app",  # Add your frontend URL
+    "https://incident-iq.onrender.com",  # Your backend
+    "https://incident-iq-navy.vercel.app",  # Add your frontend URL
     # Add any other frontend domains
 ]
 CORS_ALLOW_ALL_ORIGINS = False
