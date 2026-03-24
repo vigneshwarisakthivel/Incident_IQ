@@ -47,8 +47,10 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 ALLOWED_HOSTS = [
-    'incidentiq-backend.onrender.com',
-    'www.incidentiq-backend.onrender.com',
+    "127.0.0.1",                    # local development
+    "localhost",                     # local development
+    "incident-iq.onrender.com",      # deployed backend
+    "www.incident-iq.onrender.com",  # optional if using www
 ]
 
 AUTH_USER_MODEL = 'user.User'
