@@ -117,9 +117,7 @@ The Support Team
 
         # Send email
         try:
-            msg = EmailMultiAlternatives(subject, text_content, from_email, to)
-            msg.attach_alternative(html_content, "text/html")
-            msg.send(fail_silently=False)
+            send_email_async(subject, text_content, html_content, email)
         except BadHeaderError as e:
             print("Bad header error:", e)
             return Response({"detail": "Invalid header found."}, status=status.HTTP_400_BAD_REQUEST)
@@ -445,7 +443,7 @@ class ResetPasswordView(APIView):
 
         # 🔹 Send professional email notification
         subject = "Password Reset Successful"
-        html_message = f"""
+        html_content = f"""
         <html>
         <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
             <p>Dear {user.name},</p>
@@ -467,16 +465,22 @@ class ResetPasswordView(APIView):
         </body>
         </html>
         """
+        text_content = f"""
+    Subject: Password Successfully Reset – IncidentIQ
 
+    Dear {user.name},
+
+    Your password has been successfully updated.
+
+    You may now log in to your account using your new password.
+
+    If this change was not made by you, please contact the support team immediately.
+
+    Regards,
+    IncidentIQ Support Team
+    """
         try:
-            send_mail(
-                subject=subject,
-                message="Your password has been reset successfully.",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                html_message=html_message,
-                fail_silently=False,
-            )
+            send_email_async(subject, text_content, html_content, user.email)
         except Exception as e:
             # Optional: log email sending error
             print(f"Failed to send password reset email: {e}")
@@ -489,49 +493,57 @@ def register_admin(request):
     serializer = UserSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         user = serializer.save()
-
+        
         # Email setup
         login_url = "https://incident-iq-navy.vercel.app/login"
         subject = "Your Admin Account Has Been Created"
+        
+        html_content = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
+             <p>Dear {user.name},</p>
 
-        # html_content = f"""
-        # <html>
-        # <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
-        #     <p>Dear {user.name},</p>
+             <p>Your admin account has been successfully created.</p>
 
-        #     <p>Your admin account has been successfully created.</p>
+             <p>You can login to your account using the link below:</p>
 
-        #     <p>You can login to your account using the link below:</p>
+             <div style="margin: 20px 0;">
+                 <a href="{login_url}" style="
+                     display: inline-block;
+                     background-color: #2563eb;
+                     color: white;
+                     text-decoration: none;
+                     padding: 12px 24px;
+                     border-radius: 5px;
+                     font-weight: bold;
+                     font-size: 14px;
+                 ">Login to Your Admin Account</a>
+             </div>
 
-        #     <div style="margin: 20px 0;">
-        #         <a href="{login_url}" style="
-        #             display: inline-block;
-        #             background-color: #2563eb;
-        #             color: white;
-        #             text-decoration: none;
-        #             padding: 12px 24px;
-        #             border-radius: 5px;
-        #             font-weight: bold;
-        #             font-size: 14px;
-        #         ">Login to Your Admin Account</a>
-        #     </div>
+             <p>Thank you,<br><strong>Support Team</strong></p>
+         </body>
+         </html>
+         """
+        text_content = f"""
+        Subject: Admin Account Created – IncidentIQ
 
-        #     <p>Thank you,<br><strong>Support Team</strong></p>
-        # </body>
-        # </html>
-        # """
+        Dear {user.name},
 
-        # try:
-        #     email = EmailMessage(
-        #         subject=subject,
-        #         body=html_content,
-        #         from_email=settings.DEFAULT_FROM_EMAIL,
-        #         to=[user.email],
-        #     )
-        #     email.content_subtype = "html"  # send as HTML
-        #     email.send(fail_silently=False)
-        # except Exception as e:
-        #     print(f"Error sending email: {e}")
+        Your administrator account has been successfully created in the IncidentIQ system.
+
+        You may log in using the following link:
+        https://incident-iq-navy.vercel.app/login
+
+        For security reasons, please ensure your credentials are kept confidential.
+
+        Regards,
+        IncidentIQ Team
+        """
+        try:
+
+            send_email_async(subject, text_content, html_content, user.email)
+        except Exception as e:
+             print(f"Error sending email: {e}")
 
         return Response({
             'id': user.id,
@@ -560,7 +572,7 @@ def create_user_by_admin(request):
         original_password = request.data.get('password')
 
         subject_user = "Your Account Has Been Created"
-        html_content_user = f"""
+        html_content = f"""
         <html>
         <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
             <p>Dear {user.name},</p>
@@ -588,17 +600,25 @@ def create_user_by_admin(request):
         </body>
         </html>
         """
+        text_content = f"""
+        Subject: Account Created – IncidentIQ
 
+        Dear {user.name},
+
+        Your account has been created successfully in the IncidentIQ system.
+
+        Account Details:
+        Email: {user.email}
+        Password: {original_password}
+        Role: {user.role}
+
+        Please log in and change your password immediately for security purposes.
+
+        Regards,
+        IncidentIQ Team
+        """
         try:
-            # Send email to the new user
-            email_user = EmailMessage(
-                subject=subject_user,
-                body=html_content_user,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[user.email],
-            )
-            email_user.content_subtype = "html"
-            email_user.send(fail_silently=False)
+            send_email_async(subject_user,text_content, html_content, user.email)
 
             # Send email notification to the admin
             subject_admin = f"New User Created: {user.name}"
@@ -617,14 +637,7 @@ def create_user_by_admin(request):
             </body>
             </html>
             """
-            email_admin = EmailMessage(
-                subject=subject_admin,
-                body=html_content_admin,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[request.user.email],  # send to the admin who created the user
-            )
-            email_admin.content_subtype = "html"
-            email_admin.send(fail_silently=False)
+            send_email_async(subject_admin,  html_content_admin, request.user.email)
 
         except Exception as e:
             print(f"Error sending email: {e}")

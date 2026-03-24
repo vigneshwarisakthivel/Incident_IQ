@@ -2,6 +2,10 @@ from .models import Notification
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
+import threading
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
+
 def create_notification(
     user,
     event_type,
@@ -74,3 +78,28 @@ def notify_admin(
         article=article,
         triggered_by=triggered_user
     )
+
+class EmailThread(threading.Thread):
+    def __init__(self, subject, text_content, html_content, to_email):
+        self.subject = subject
+        self.text_content = text_content
+        self.html_content = html_content
+        self.to_email = to_email
+        threading.Thread.__init__(self)
+
+    def run(self):
+        try:
+            msg = EmailMultiAlternatives(
+                subject=self.subject,
+                body=self.text_content,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[self.to_email],
+            )
+            msg.attach_alternative(self.html_content, "text/html")
+            msg.send(fail_silently=False)
+
+        except Exception as e:
+            print("Email sending failed:", e)
+
+def send_email_async(subject, text_content, html_content, to_email):
+    EmailThread(subject, text_content, html_content, to_email).start()
