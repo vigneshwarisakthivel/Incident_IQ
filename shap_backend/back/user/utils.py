@@ -110,4 +110,4 @@ def send_email_async(subject, text_content, html_content, to_email):
     thread.daemon = False   # important → prevents killing before finishing
     thread.start()
 
-    thread.join(5)   # wait maximum 3 seconds only
+    thread.join(30)   # wait maximum 3 seconds only

@@ -9,14 +9,16 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "back.settings")
 
 django.setup()
 
-import user.routing   # this must point to the app that has consumers.py
+# import AFTER setup
+from user.routing import websocket_urlpatterns
+
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
 
     "websocket": AuthMiddlewareStack(
         URLRouter(
-            user.routing.websocket_urlpatterns
+            websocket_urlpatterns
         )
     ),
 })
