@@ -58,79 +58,115 @@ def login_user(request):
             "role": user.role
         }
     })
+import random
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+from .serializers import ForgotPasswordEmailSerializer
+from .models import PasswordResetOTP
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 
 class ForgotPasswordView(APIView):
     def post(self, request):
         serializer = ForgotPasswordEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data['email']
 
+        email = serializer.validated_data["email"]
+
+        # Check if user exists
         try:
-            user = User.objects.get(email=email)  # ✅ Using custom user model
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
             return Response(
                 {"detail": "User with this email does not exist."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        # Generate OTP
+        # Generate 6-digit OTP
         otp_code = "{:06d}".format(random.randint(0, 999999))
+
+        # Save OTP in DB
         PasswordResetOTP.objects.create(user=user, otp=otp_code)
 
-        # Prepare email content
-        subject = "Reset Your Password – Action Required"
-        from_email = settings.EMAIL_HOST_USER
-        to = [email]
+        # Email subject
+        subject = "Reset Your Password – OTP Verification"
 
-        # Plain text fallback
+        # Plain text version
         text_content = f"""
 Hello {user.name},
 
-We received a request to reset the password for your account.
+We received a request to reset your password.
 
 Your One-Time Password (OTP) is: {otp_code}
 
 This OTP is valid for 10 minutes. Please do not share this code with anyone.
 
-If you did not request a password reset, you can safely ignore this email.
+If you did not request this, you can safely ignore this email.
 
 Thank you,
-The Support Team
+IncidentIQ Support Team
 """
 
-        # HTML content
+        # HTML version
         html_content = f"""
 <html>
-  <body style="font-family:Arial,sans-serif; line-height:1.6; color:#333;">
-    <p>Hello {user.name},</p>
-    <p>We received a request to reset the password for your account.</p>
-    <p style="font-size:20px; font-weight:bold; color:#1a1a1a;">
-      Your OTP: {otp_code}
-    </p>
-    <p>This OTP is valid for <strong>10 minutes</strong>. Please do not share it with anyone.</p>
-    <p>If you did not request a password reset, you can safely ignore this email.</p>
-    <br>
-    <p>Thank you,<br>The Support Team</p>
+  <body style="font-family:Arial,sans-serif; background:#f4f6f8; padding:20px;">
+    <div style="max-width:500px; margin:auto; background:#ffffff; padding:25px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.05);">
+      
+      <h2 style="text-align:center; color:#2c3e50;">Password Reset Request</h2>
+
+      <p>Hello <strong>{user.name}</strong>,</p>
+
+      <p>We received a request to reset your password.</p>
+
+      <p style="text-align:center; margin:30px 0;">
+        <span style="font-size:28px; font-weight:bold; letter-spacing:5px; color:#1a73e8;">
+          {otp_code}
+        </span>
+      </p>
+
+      <p>This OTP is valid for <strong>10 minutes</strong>. Please do not share it with anyone.</p>
+
+      <p>If you did not request this, you can safely ignore this email.</p>
+
+      <br>
+
+      <p>Thank you,<br><strong>IncidentIQ Support Team</strong></p>
+    </div>
   </body>
 </html>
 """
 
-        # Send email
+        # Send email (synchronous – works on Render free plan)
         try:
-            send_email_async(subject, text_content, html_content, user.email)
-        except BadHeaderError as e:
-            print("Bad header error:", e)
-            return Response({"detail": "Invalid header found."}, status=status.HTTP_400_BAD_REQUEST)
+            email_message = EmailMultiAlternatives(
+                subject=subject,
+                body=text_content,
+                from_email=settings.EMAIL_HOST_USER,
+                to=[user.email],
+            )
+
+            email_message.attach_alternative(html_content, "text/html")
+            email_message.send(fail_silently=False)
+
         except Exception as e:
-            print("Email sending failed:", e)
-            return Response({"detail": "Failed to send email."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print("Email sending failed:", str(e))
+            return Response(
+                {"detail": "Failed to send email. Please try again later."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
         return Response(
             {"detail": "OTP sent to your email"},
             status=status.HTTP_200_OK
         )
-
-@api_view(['PATCH'])
+    
 @permission_classes([IsAuthenticated])
 def update_user_status(request, pk):
 
