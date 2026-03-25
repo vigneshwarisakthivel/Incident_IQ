@@ -79,7 +79,7 @@ def notify_admin(
         triggered_by=triggered_user
     )
 
-#
+
 class EmailThread(threading.Thread):
     def __init__(self, subject, text_content, html_content, to_email):
         self.subject = subject
