@@ -115,7 +115,7 @@ The Support Team
 </html>
 """
 
-        # Send email
+
         try:
             send_email_async(subject, text_content, html_content, user.email)
         except BadHeaderError as e:
