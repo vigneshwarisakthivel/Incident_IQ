@@ -78,27 +78,17 @@ def notify_admin(
         article=article,
         triggered_by=triggered_user
     )
-
-import threading
 from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 
-class EmailThread(threading.Thread):
-    def __init__(self, subject, text_content, html_content, to_email):
-        self.subject = subject
-        self.text_content = text_content
-        self.html_content = html_content
-        self.to_email = to_email
-        threading.Thread.__init__(self)
+def send_email_blocking(subject, text_content, html_content, to_email):
+    msg = EmailMultiAlternatives(
+        subject=subject,
+        body=text_content,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[to_email],
+    )
+    msg.attach_alternative(html_content, "text/html")
 
-    def run(self):
-        msg = EmailMultiAlternatives(
-            subject=self.subject,
-            body=self.text_content,
-            from_email="vigneshwarisakthivel18@gmail.com",
-            to=[self.to_email]
-        )
-        msg.attach_alternative(self.html_content, "text/html")
-        msg.send()
-
-def send_email_async(subject, text_content, html_content, to_email):
-    EmailThread(subject, text_content, html_content, to_email).start()
+    # API will WAIT here until the email is sent
+    msg.send(fail_silently=False)
