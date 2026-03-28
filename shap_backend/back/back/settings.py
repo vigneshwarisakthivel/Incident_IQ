@@ -16,6 +16,14 @@ import dj_database_url
 import os
 import socket
 
+
+# Force Python to use IPv4 for SMTP connections
+original_getaddrinfo = socket.getaddrinfo
+
+def getaddrinfo_ipv4_only(*args, **kwargs):
+    return [res for res in original_getaddrinfo(*args, **kwargs) if res[0] == socket.AF_INET]
+
+socket.getaddrinfo = getaddrinfo_ipv4_only
 # Force IPv4 for SMTP connections
 socket.setdefaulttimeout(60)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
