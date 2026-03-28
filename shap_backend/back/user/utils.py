@@ -1,7 +1,7 @@
 from .models import Notification
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-
+import time
 import threading
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
@@ -79,6 +79,8 @@ def notify_admin(
         triggered_by=triggered_user
     )
 
+import threading
+from django.core.mail import EmailMultiAlternatives
 
 class EmailThread(threading.Thread):
     def __init__(self, subject, text_content, html_content, to_email):
@@ -92,20 +94,11 @@ class EmailThread(threading.Thread):
         msg = EmailMultiAlternatives(
             subject=self.subject,
             body=self.text_content,
-            from_email=None,
+            from_email="vigneshwarisakthivel18@gmail.com",
             to=[self.to_email]
         )
         msg.attach_alternative(self.html_content, "text/html")
         msg.send()
 
-
 def send_email_async(subject, text_content, html_content, to_email):
-    thread = EmailThread(subject, text_content, html_content, to_email)
-    thread.daemon = False
-    thread.start()
-    thread = EmailThread(subject, text_content, html_content, to_email)
-
-    thread.daemon = False   # important → prevents killing before finishing
-    thread.start()
-
-    thread.join(30)   # wait maximum 3 seconds only
+    EmailThread(subject, text_content, html_content, to_email).start()

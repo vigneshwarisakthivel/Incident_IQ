@@ -158,9 +158,9 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp-relay.brevo.com"       # Brevo SMTP server
 EMAIL_PORT = 587                           # TLS port
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "vigneshwarisakthivel18@gmail.com"  # Replace with your Brevo verified sender email
-EMAIL_HOST_PASSWORD = "xsmtpsib-f3ed597fd48c9c574530f440211d3df6a057e4b7baf978c8d9f745139948f1d7-ZcrSlcHcS7cPRYc2"  # Your SMTP key
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_HOST_USER = "a5f6ef001@smtp-brevo.com"
+EMAIL_HOST_PASSWORD = "xsmtpsib-f3ed597fd48c9c574530f440211d3df6a057e4b7baf978c8d9f745139948f1d7-zxGiZCdH51nFgUYa"  # Your SMTP key
+DEFAULT_FROM_EMAIL = "vigneshwarisakthivel18@gmail.com"
 EMAIL_TIMEOUT = 5
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
