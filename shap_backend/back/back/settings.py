@@ -153,15 +153,18 @@ USE_TZ = True
 
 # settings.py
 
-# Email backend settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp-relay.brevo.com"       # Brevo SMTP server
-EMAIL_PORT = 587                           # TLS port
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "a5f6ef001@smtp-brevo.com"
-EMAIL_HOST_PASSWORD = "xsmtpsib-f3ed597fd48c9c574530f440211d3df6a057e4b7baf978c8d9f745139948f1d7-zxGiZCdH51nFgUYa"  # Your SMTP key
-DEFAULT_FROM_EMAIL = "vigneshwarisakthivel18@gmail.com"
-EMAIL_TIMEOUT = 5
+
+EMAIL_HOST_USER = "svel76356@gmail.com"
+EMAIL_HOST_PASSWORD = "hahgawpgozigumlt"
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+EMAIL_TIMEOUT = 60
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
