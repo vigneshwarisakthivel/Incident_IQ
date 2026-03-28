@@ -78,17 +78,22 @@ def notify_admin(
         article=article,
         triggered_by=triggered_user
     )
-from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
+from django.core.mail import get_connection, EmailMultiAlternatives
 
 def send_email_blocking(subject, text_content, html_content, to_email):
+
+    connection = get_connection(timeout=120)
+    connection.open()
+
     msg = EmailMultiAlternatives(
         subject=subject,
         body=text_content,
-        from_email=settings.DEFAULT_FROM_EMAIL,
+        from_email="svel76356@gmail.com",
         to=[to_email],
+        connection=connection,
     )
-    msg.attach_alternative(html_content, "text/html")
 
-    # API will WAIT here until the email is sent
+    msg.attach_alternative(html_content, "text/html")
     msg.send(fail_silently=False)
+
+    connection.close()

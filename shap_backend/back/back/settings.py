@@ -174,7 +174,7 @@ EMAIL_HOST_PASSWORD = "hahgawpgozigumlt"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-EMAIL_TIMEOUT = 60
+EMAIL_TIMEOUT = 120
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
