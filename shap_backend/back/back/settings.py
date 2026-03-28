@@ -14,8 +14,10 @@ from pathlib import Path
 from datetime import timedelta
 import dj_database_url
 import os
+import socket
 
-
+# Force IPv4 for SMTP connections
+socket.setdefaulttimeout(60)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
